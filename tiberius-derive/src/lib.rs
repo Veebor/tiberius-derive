@@ -207,8 +207,8 @@ fn try_get_rows_by_key(fields: std::vec::IntoIter<Field>, rename_rule: RenameRul
 
 fn expand_owned(ident: Ident, fields: Vec<proc_macro2::TokenStream>) -> proc_macro2::TokenStream {
     quote! {
-        impl #ident{
-            pub fn from_row(row: tiberius::Row) -> Result<Self, tiberius::error::Error> {
+        impl FromRow for #ident{
+            fn from_row(row: tiberius::Row) -> Result<Self, tiberius::error::Error> {
                 let mut row_iter = row.into_iter();
 
                 Ok(Self{
@@ -224,8 +224,8 @@ fn expand_borrowed(
     fields: Vec<proc_macro2::TokenStream>,
 ) -> proc_macro2::TokenStream {
     quote! {
-        impl<'a> #ident<'a>{
-            pub fn from_row(row: &'a tiberius::Row) -> Result<Self, tiberius::error::Error> {
+        impl<'a> FromRow for #ident<'a>{
+            fn from_row(row: &'a tiberius::Row) -> Result<Self, tiberius::error::Error> {
                 Ok(Self{
                     #(#fields,)*
                 })
@@ -236,8 +236,8 @@ fn expand_borrowed(
 
 fn expand_copy(ident: Ident, fields: Vec<proc_macro2::TokenStream>) -> proc_macro2::TokenStream {
     quote! {
-        impl #ident{
-            pub fn from_row(row: &tiberius::Row) -> Result<Self, tiberius::error::Error> {
+        impl FromRow for #ident{
+            fn from_row(row: &tiberius::Row) -> Result<Self, tiberius::error::Error> {
                 Ok(Self{
                     #(#fields,)*
                 })
